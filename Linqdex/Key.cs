@@ -6,6 +6,7 @@ namespace Linqdex
 {
     internal class Key : IDocumentKey
     {
+        private const string keyField = "__key";
         private readonly string _key;
         public Key(string key)
         {
@@ -26,9 +27,34 @@ namespace Linqdex
 
         public Query ToQuery()
         {
-            return new TermQuery(new Term("__key", this._key));
+            return new TermQuery(new Term(keyField, this._key));
         }
 
         public bool Empty { get { return false; } }
+
+        
+
+        public object this[string property]
+        {
+            get
+            { 
+                if (property == null)
+                {
+                    throw new ArgumentNullException("property");
+                }
+
+                if (property == keyField)
+                {
+                    return _key;
+                }
+
+                throw new KeyNotFoundException();
+            }
+        }
+
+        public IEnumerable<string> Properties
+        {
+            get { return new[] { keyField }; }
+        }
     }
 }
